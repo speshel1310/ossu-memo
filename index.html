@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Игра Memory</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Конфигурация загружается первой -->
+    <script src="config.js"></script>
+    
+    <!-- Yandex.Metrika counter - ID берется из конфига -->
+    <script type="text/javascript">
+        // Ждем загрузки конфига, затем инициализируем метрику
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.GAME_CONFIG && window.GAME_CONFIG.analytics.yandexMetricaId) {
+                const metricaId = window.GAME_CONFIG.analytics.yandexMetricaId;
+                
+                (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                m[i].l=1*new Date();
+                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+                (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+                window.ym(metricaId, "init", {
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,
+                    webvisor:true
+                });
+                
+                // Добавляем noscript тег
+                const noscript = document.createElement('noscript');
+                const img = document.createElement('img');
+                img.src = `https://mc.yandex.ru/watch/${metricaId}`;
+                img.style.cssText = 'position:absolute; left:-9999px;';
+                img.alt = '';
+                const div = document.createElement('div');
+                div.appendChild(img);
+                noscript.appendChild(div);
+                document.body.appendChild(noscript);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Логотип и заголовок будут заполнены из конфига -->
+        <div class="logo-container" id="logo-container">
+            <!-- Контент добавляется через JavaScript -->
+        </div>
+        
+        <div class="game-board">
+            <!-- Cards will be dynamically added here -->
+        </div>
+        
+        <div id="popup-overlay" class="hidden">
+            <div id="win-popup">
+                <button id="close-popup-btn" class="close-popup-btn" aria-label="Закрыть попап">&times;</button>
+                <div id="win-message">
+                    <!-- Контент добавляется через JavaScript -->
+                    <div class="copy-notification" id="copy-notification">Скопировано!</div>
+                </div>
+                <div class="popup-buttons">
+                    <button id="restart-btn">Играть заново</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Скрипты загружаются в правильном порядке -->
+    <script src="script.js"></script>
+    
+    <!-- Инициализация контента из конфига -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeGameContent();
+        });
+        
+        function initializeGameContent() {
+            const config = window.GAME_CONFIG;
+            if (!config) return;
+            
+            // Устанавливаем заголовок страницы
+            document.getElementById('page-title').textContent = config.game.title;
+            
+            // Заполняем контейнер с логотипом
+            const logoContainer = document.getElementById('logo-container');
+            let logoHTML = '';
+            
+            if (config.logo.enabled) {
+                logoHTML += `<img src="${config.logo.src}" alt="Логотип" class="logo">`;
+            }
+            
+            logoHTML += `<p class="instruction-text" style="color: black;">${config.game.title}</p>`;
+            logoContainer.innerHTML = logoHTML;
+            
+            // Заполняем сообщение о победе
+            const winMessage = document.getElementById('win-message');
+            const finalMessage = config.game.winMessage.replace('{PROMO_CODE}', 
+                `<span id="promo-code" class="promo-code">${config.game.promoCode}</span>`);
+            
+            winMessage.innerHTML = `
+                ${finalMessage}
+                <div class="copy-notification" id="copy-notification">Скопировано!</div>
+            `;
+            
+            // Устанавливаем текст кнопки
+            document.getElementById('restart-btn').textContent = config.game.restartButtonText;
+        }
+    </script>
+</body>
+</html>
